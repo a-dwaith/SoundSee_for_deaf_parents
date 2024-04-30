@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "82716605327",
+    "project_id": "soundsee-f1ae7",
+    "storage_bucket": "soundsee-f1ae7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:82716605327:android:d980c2280bed438ad0e9fa",
+        "android_client_info": {
+          "package_name": "com.example.soundsee"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyANKiNqJzPuSySQvLhgrLEkK0jcIAYaNSE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
