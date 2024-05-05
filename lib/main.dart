@@ -12,8 +12,26 @@ import 'package:soundsee/pages/user_page/update_profile.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'firebase_options.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:awesome_notifications/awesome_notifications.dart';
 
 void main() async {
+  AwesomeNotifications().initialize(
+    null,
+    [
+      NotificationChannel(
+          channelKey: 'alerts',
+          channelName: 'Alerts',
+          channelDescription: 'Notification tests as alerts',
+          playSound: true,
+          onlyAlertOnce: true,
+          groupAlertBehavior: GroupAlertBehavior.Children,
+          importance: NotificationImportance.High,
+          defaultPrivacy: NotificationPrivacy.Private,
+          defaultColor: Colors.deepPurple,
+          ledColor: Colors.deepPurple)
+    ],
+    debug: true,
+  );
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
@@ -53,7 +71,7 @@ class SoundSee extends StatelessWidget {
         '/updateuserprofile': (_) => const UpdateProfile(),
         '/admin_home': (_) => const AdminHomePage(),
         '/admin_update': (_) => const UpdateAdminProfile(),
-        '/notification_page': (_) => NotificationHistoryPage(),
+        '/notification_page': (_) => const NotificationHistoryPage(),
       },
     );
   }

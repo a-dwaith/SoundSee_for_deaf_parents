@@ -6,6 +6,7 @@ import 'package:soundsee/pages/componets/squared_tile.dart';
 import 'package:soundsee/pages/componets/text_field.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:lottie/lottie.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class Signuppage extends StatefulWidget {
   const Signuppage({super.key});
@@ -48,6 +49,13 @@ class _SignuppageState extends State<Signuppage> {
           udidController.text.trim(),
         );
 
+        insertData(
+          emailController.text.trim(),
+          int.parse(phoneController.text.trim()),
+          nameController.text.trim(),
+          udidController.text.trim(),
+        );
+
         FirebaseAuth.instance.signOut();
         Navigator.pop(context);
       } else {
@@ -84,6 +92,31 @@ class _SignuppageState extends State<Signuppage> {
         'udid': udid,
       },
     );
+  }
+
+  Future insertData(
+      String email, int mobilenumber, String name, String udid) async {
+    final supabase = Supabase.instance.client;
+    // Insert data into 'user_data' table
+    final response = await supabase.from('user_data').insert(
+      [
+        {
+          'udid': udid,
+          'name': name,
+          'email_id': email,
+          'mobile_no': mobilenumber
+        }
+      ],
+    );
+
+    // Check if insertion was successful
+    if (response.error != null) {
+      // Error occurred
+      print('Error inserting data: ${response.error!.message}');
+    } else {
+      // Data inserted successfully
+      print('Data inserted successfully');
+    }
   }
 
   @override

@@ -5,6 +5,9 @@ import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:tflite_audio/tflite_audio.dart';
+import 'package:awesome_notifications/awesome_notifications.dart';
+import 'dart:core';
+import 'package:intl/intl.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -21,8 +24,8 @@ class _HomePageState extends State<HomePage> {
   Future<void> _sendEmail() async {
     final Email email = Email(
         body: '',
-        subject: '[SoundSee Feedback]',
-        recipients: ['dwaithmk@gmail.com'],
+        subject: 'SoundSee Feedback',
+        recipients: ['im.soundsee@gmail.com'],
         cc: [],
         bcc: [],
         attachmentPaths: [],
@@ -43,6 +46,18 @@ class _HomePageState extends State<HomePage> {
     FirebaseAuth.instance.signOut();
   }
 
+  triggerNotification(Sound) {
+    String sound = Sound;
+    AwesomeNotifications().createNotification(
+      content: NotificationContent(
+        id: 10,
+        channelKey: 'alerts',
+        title: 'Allert',
+        body: sound,
+      ),
+    );
+  }
+
   @override
   void initState() {
     super.initState();
@@ -52,6 +67,13 @@ class _HomePageState extends State<HomePage> {
       inputType: 'rawAudio',
       numThreads: 1,
       isAsset: true,
+    );
+    AwesomeNotifications().isNotificationAllowed().then(
+      (isallowed) {
+        if (!isallowed) {
+          AwesomeNotifications().requestPermissionToSendNotifications();
+        }
+      },
     );
   }
 
@@ -79,6 +101,7 @@ class _HomePageState extends State<HomePage> {
           // Insert data into Supabase on completion
           _insertIntoSupabase(_sound);
           // Vibrate after audio recognition and data insertion
+          triggerNotification(_sound);
           _performVibration();
         },
       );
@@ -90,10 +113,12 @@ class _HomePageState extends State<HomePage> {
   Future<void> _insertIntoSupabase(String sound) async {
     final supabase = Supabase.instance.client;
     final currentTime = DateTime.now();
-    String formattedTime = currentTime.toIso8601String();
+    String formattedTime = DateFormat('HH:mm:ss').format(currentTime);
+    String formatedDate = currentTime.toString().split(' ')[0];
     await supabase.from('notification_history').insert(
       [
         {
+          'date': formatedDate,
           'time': formattedTime,
           'label': sound,
         },
@@ -162,7 +187,7 @@ class _HomePageState extends State<HomePage> {
             ListTile(
               leading: const Icon(Icons.update_outlined),
               title: const Text(
-                "Update Profile",
+                "Update contact details",
                 style: TextStyle(fontSize: 20),
               ),
               onTap: () {

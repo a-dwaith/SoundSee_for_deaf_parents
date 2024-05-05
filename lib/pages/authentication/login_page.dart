@@ -14,6 +14,7 @@ class LogInPage extends StatefulWidget {
 }
 
 class _LogInPageState extends State<LogInPage> {
+  bool _obscureText = true;
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
@@ -32,7 +33,7 @@ class _LogInPageState extends State<LogInPage> {
         email: emailController.text,
         password: passwordController.text,
       );
-      
+
       Navigator.pop(context);
     } on FirebaseAuthException catch (e) {
       Navigator.pop(context);
@@ -108,10 +109,45 @@ class _LogInPageState extends State<LogInPage> {
 
                 // Password Text box
 
-                MyTextfield(
-                  controller: passwordController,
-                  hintText: "Password",
-                  obscureText: true,
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                  child: TextFormField(
+                    controller: passwordController,
+                    obscureText: _obscureText,
+                    decoration: InputDecoration(
+                      // Border color at the time of seeing
+                      enabledBorder: const OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black),
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(10),
+                        ),
+                      ),
+                      // Border color at the time of focused
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: HexColor("#0066FF")),
+                        borderRadius: const BorderRadius.all(
+                          Radius.circular(10),
+                        ),
+                      ),
+                      // fillColor: Colors.grey,
+                      // filled: true,
+                      labelText: "Password",
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _obscureText
+                              ? Icons.visibility_off
+                              : Icons.visibility,
+                        ),
+                        onPressed: () {
+                          setState(
+                            () {
+                              _obscureText = !_obscureText;
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                  ),
                 ),
 
                 const SizedBox(height: 10),

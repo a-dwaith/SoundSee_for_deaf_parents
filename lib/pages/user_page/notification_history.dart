@@ -1,5 +1,3 @@
-// ignore_for_file: unnecessary_cast
-
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -30,6 +28,7 @@ class _NotificationPageState extends State<NotificationHistoryPage> {
           .order('time', ascending: false);
       setState(
         () {
+          // ignore: unnecessary_cast
           notificationHistory = response as List<Map<String, dynamic>>;
         },
       );
@@ -55,10 +54,8 @@ class _NotificationPageState extends State<NotificationHistoryPage> {
               itemCount: notificationHistory.length,
               itemBuilder: (context, index) {
                 final notification = notificationHistory[index];
-                final time = DateTime.parse(
-                  notification['time'],
-                );
-                final formattedTime = time.toIso8601String();
+                final date = notification['date'];
+                final time = notification['time'];
                 final label = notification['label'];
 
                 return Container(
@@ -72,7 +69,11 @@ class _NotificationPageState extends State<NotificationHistoryPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        formattedTime,
+                        date,
+                        style: const TextStyle(fontSize: 16.0),
+                      ),
+                      Text(
+                        time,
                         style: const TextStyle(fontSize: 16.0),
                       ),
                       Text(

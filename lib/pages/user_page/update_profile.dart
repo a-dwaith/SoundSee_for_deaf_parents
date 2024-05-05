@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:lottie/lottie.dart';
@@ -6,6 +5,7 @@ import 'package:soundsee/pages/componets/button.dart';
 import 'package:soundsee/pages/componets/text_field.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hexcolor/hexcolor.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class UpdateProfile extends StatefulWidget {
   const UpdateProfile({super.key});
@@ -25,8 +25,8 @@ class _UpdateProfileState extends State<UpdateProfile> {
   Future<void> _sendEmail() async {
     final Email email = Email(
         body: '',
-        subject: '[SoundSee Feedback]',
-        recipients: ['dwaithmk@gmail.com'],
+        subject: 'SoundSee Feedback',
+        recipients: ['im.soundsee@gmail.com'],
         cc: [],
         bcc: [],
         attachmentPaths: [],
@@ -44,35 +44,31 @@ class _UpdateProfileState extends State<UpdateProfile> {
     }
   }
 
+  void showerrorMessage(String message) {
+    final snackBar = SnackBar(
+      content: Text(
+        message,
+        style: const TextStyle(color: Colors.white),
+      ),
+      duration: const Duration(seconds: 3),
+      backgroundColor: Colors.black,
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+
   void signOut() {
     FirebaseAuth.instance.signOut();
   }
 
-  Future<void> updateUserData() async {
-    final user = FirebaseAuth.instance.currentUser;
-    if (user != null) {
-      final docRef =
-          FirebaseFirestore.instance.collection('user_details').doc(user.email);
-
-      // Update data based on entered values
-      final updatedData = {
-        'name': nameController.text,
-        'email': emailController.text,
-        'mobile_no': phoneController.text,
-      };
-
-      await docRef.update(updatedData);
-
-      // Show a success message (optional)
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Profile updated successfully!'),
-        ),
-      );
-    } else {
-      // Handle case where no user is signed in
-      print('No user signed in');
-    }
+  Future<void> updateUserData(
+      String udid, String emailId, String mobileNo) async {
+    final supabase = Supabase.instance.client;
+    await supabase.from('user_data').update(
+      {
+        'email_id': emailId,
+        'mobile_no': mobileNo,
+      },
+    ).match({'udid': udid});
   }
 
   @override
@@ -105,7 +101,7 @@ class _UpdateProfileState extends State<UpdateProfile> {
             ListTile(
               leading: const Icon(Icons.update_outlined),
               title: const Text(
-                "Update Profile",
+                "Update contact details",
                 style: TextStyle(fontSize: 20),
               ),
               onTap: () {
@@ -140,7 +136,7 @@ class _UpdateProfileState extends State<UpdateProfile> {
               // Just a Lock Logo
               children: [
                 const Text(
-                  'Update profile details',
+                  'Update contact details',
                   style: TextStyle(
                       color: Colors.black,
                       fontSize: 20,
@@ -156,18 +152,18 @@ class _UpdateProfileState extends State<UpdateProfile> {
                 // Welcome note
                 const SizedBox(height: 25),
                 MyTextfield(
-                  controller: nameController,
-                  hintText: "Name",
+                  controller: udidController,
+                  hintText: "UDID",
                   obscureText: false,
                 ),
                 const SizedBox(height: 15),
+
                 MyTextfield(
                   controller: emailController,
-                  hintText: "Email",
+                  hintText: "Email ID",
                   obscureText: false,
                 ),
                 const SizedBox(height: 15),
-                // Password Text box
                 MyTextfield(
                   controller: phoneController,
                   hintText: "Mobile number",
@@ -176,7 +172,19 @@ class _UpdateProfileState extends State<UpdateProfile> {
                 const SizedBox(height: 50),
                 MyButton(
                   text: 'Update profile',
-                  onTap: updateUserData,
+                  onTap: () async {
+                    final String emailId = emailController.text.trim();
+                    final String mobileNo = phoneController.text.trim();
+                    final String udid = udidController.text.trim();
+
+                    // Call updateUserData function
+                    await updateUserData(udid, emailId, mobileNo);
+
+                    emailController.clear();
+                    phoneController.clear();
+                    udidController.clear();
+                    showerrorMessage("Contact details Updated!");
+                  },
                 ),
                 const SizedBox(height: 25),
               ],

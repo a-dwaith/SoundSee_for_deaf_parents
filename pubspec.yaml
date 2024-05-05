@@ -28,6 +28,8 @@ dependencies:
   firebase_messaging: ^14.9.1
   supabase_flutter: ^2.5.1
   flutter_vibrate: ^1.3.0
+  flutter_local_notifications: ^17.1.1
+  awesome_notifications: ^0.9.3+1
 
 flutter_launcher_icons:
   android: "launcher_icon"
@@ -35,10 +37,15 @@ flutter_launcher_icons:
   image_path: "lib/assets/images/soundsee_icon.png"
   min_sdk_android: 21 # android min sdk min:16, default 21
 
-# flutter_native_splash:
-  # android: true
-  # color: "#ffffff"
-  # image: lib/assets/images/soundsee_icon.png
+flutter_native_splash:
+  android: true
+  color: "#272727"
+  image: lib/assets/images/soundsee_icon.png
+
+  android_12:
+    color: "#272727"
+    image: lib/assets/images/soundsee_icon.png
+  web: false
 
 dev_dependencies:
   flutter_test:
